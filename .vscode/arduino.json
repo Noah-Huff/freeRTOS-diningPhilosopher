@@ -1,0 +1,5 @@
+{
+    "sketch": "dining_philosopher.ino",
+    "board": "arduino:avr:uno",
+    "port": "/dev/tty.usbserial-DN04285J"
+}
