@@ -84,21 +84,40 @@ void setup()
     xTaskCreate(processThree, "process Three", 104, NULL, 1, NULL);
     xTaskCreate(processFour, "process Four", 104, NULL, 1, NULL);
     xTaskCreate(processFive, "For process Five", 104, NULL, 1, NULL);
-
 }
 
 void loop() {}
-int eatingHistory[] = { 0, 0, 0, 0, 0 };
-boolean history(int proceessNumber) {
+int eatingHistory[] = {0, 0, 0, 0, 0};
+boolean history(int proceessNumber)
+{
     int currentProcess = proceessNumber - 1;
-    int leftProcess = currentProcess - 1;
-    int rightProcess = currentProcess + 1;
-    if (eatingHistory[proceessNumber] > 32000) {
-        for ( int i = 0; i < 5; i++ ) {
+    int leftProcess;
+    if (currentProcess == 0)
+    {
+        leftProcess = 4;
+    }
+    else
+    {
+        leftProcess = currentProcess - 1;
+    }
+    int rightProcess;
+    if (currentProcess == 4)
+    {
+        rightProcess = 0;
+    }
+    else
+    {
+        rightProcess = currentProcess + 1;
+    }
+    if (eatingHistory[proceessNumber] > 32000)
+    {
+        for (int i = 0; i < 5; i++)
+        {
             eatingHistory[i] = 0;
         }
     }
-    /* enter the logic for preventing starvation
+    //enter the logic for preventing starvation
+    /* 
     if () {
         return true;
     } else return false;
@@ -112,7 +131,7 @@ void processOne(void *pvParamaters __attribute__((unused)))
         if (xSemaphoreTake(xResourceOneSemaphore, (TickType_t)5) == pdTRUE)
         {
             digitalWrite(resource_1, HIGH);
-            Serial.print("P-1 got R-1 " ); 
+            Serial.print("P-1 got R-1 ");
             Serial.println(uxSemaphoreGetCount(xResourceOneSemaphore));
             vTaskDelay(100);
             if (xSemaphoreTake(xResourceFiveSemaphore, (TickType_t)5) == pdTRUE)
