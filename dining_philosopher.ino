@@ -1,6 +1,8 @@
 #include <Arduino_FreeRTOS.h>
 #include <semphr.h>
 
+#define EATING_LIMIT 2
+
 //the binary semaphores for each of the resources
 SemaphoreHandle_t xResourceOneSemaphore;
 SemaphoreHandle_t xResourceTwoSemaphore;
@@ -87,42 +89,6 @@ void setup()
 }
 
 void loop() {}
-int eatingHistory[] = {0, 0, 0, 0, 0};
-boolean history(int proceessNumber)
-{
-    int currentProcess = proceessNumber - 1;
-    int leftProcess;
-    if (currentProcess == 0)
-    {
-        leftProcess = 4;
-    }
-    else
-    {
-        leftProcess = currentProcess - 1;
-    }
-    int rightProcess;
-    if (currentProcess == 4)
-    {
-        rightProcess = 0;
-    }
-    else
-    {
-        rightProcess = currentProcess + 1;
-    }
-    if (eatingHistory[proceessNumber] > 32000)
-    {
-        for (int i = 0; i < 5; i++)
-        {
-            eatingHistory[i] = 0;
-        }
-    }
-    //enter the logic for preventing starvation
-    /* 
-    if () {
-        return true;
-    } else return false;
-    */
-}
 
 void processOne(void *pvParamaters __attribute__((unused)))
 {
@@ -131,13 +97,13 @@ void processOne(void *pvParamaters __attribute__((unused)))
         if (xSemaphoreTake(xResourceOneSemaphore, (TickType_t)5) == pdTRUE)
         {
             digitalWrite(resource_1, HIGH);
-            Serial.print("P-1 got R-1 ");
-            Serial.println(uxSemaphoreGetCount(xResourceOneSemaphore));
+            //Serial.print("P-1 got R-1 ");
+            //Serial.println(uxSemaphoreGetCount(xResourceOneSemaphore));
             vTaskDelay(100);
             if (xSemaphoreTake(xResourceFiveSemaphore, (TickType_t)5) == pdTRUE)
             {
-                Serial.print("P-1 to R-5 ");
-                Serial.println(uxSemaphoreGetCount(xResourceFiveSemaphore));
+                //Serial.print("P-1 to R-5 ");
+                //Serial.println(uxSemaphoreGetCount(xResourceFiveSemaphore));
                 digitalWrite(resource_5, HIGH);
                 digitalWrite(process_1, HIGH);
                 vTaskDelay(100);
@@ -147,7 +113,7 @@ void processOne(void *pvParamaters __attribute__((unused)))
             }
             digitalWrite(resource_1, LOW);
             xSemaphoreGive(xResourceOneSemaphore);
-            vTaskDelay(100);
+            vTaskDelay(250);
         }
     }
 }
@@ -155,17 +121,16 @@ void processTwo(void *pvParamaters __attribute__((unused)))
 {
     for (;;)
     {
-
         if (xSemaphoreTake(xResourceOneSemaphore, (TickType_t)5) == pdTRUE)
         {
             digitalWrite(resource_1, HIGH);
-            Serial.print("P-2 got R-1 ");
-            Serial.println(uxSemaphoreGetCount(xResourceOneSemaphore));
+            //Serial.print("P-2 got R-1 ");
+            //Serial.println(uxSemaphoreGetCount(xResourceOneSemaphore));
             vTaskDelay(100);
             if (xSemaphoreTake(xResourceTwoSemaphore, (TickType_t)5) == pdTRUE)
             {
-                Serial.print("P-2 to R-2 ");
-                Serial.println(uxSemaphoreGetCount(xResourceTwoSemaphore));
+                //Serial.print("P-2 to R-2 ");
+                //Serial.println(uxSemaphoreGetCount(xResourceTwoSemaphore));
                 digitalWrite(resource_2, HIGH);
                 digitalWrite(process_2, HIGH);
                 vTaskDelay(100);
@@ -175,7 +140,7 @@ void processTwo(void *pvParamaters __attribute__((unused)))
             }
             digitalWrite(resource_1, LOW);
             xSemaphoreGive(xResourceOneSemaphore);
-            vTaskDelay(100);
+            vTaskDelay(250);
         }
     }
 }
@@ -186,13 +151,13 @@ void processThree(void *pvParamaters __attribute__((unused)))
         if (xSemaphoreTake(xResourceThreeSemaphore, (TickType_t)5) == pdTRUE)
         {
             digitalWrite(resource_3, HIGH);
-            Serial.print("P-3 got R-3 ");
-            Serial.println(uxSemaphoreGetCount(xResourceThreeSemaphore));
+            //Serial.print("P-3 got R-3 ");
+            //Serial.println(uxSemaphoreGetCount(xResourceThreeSemaphore));
             vTaskDelay(100);
             if (xSemaphoreTake(xResourceTwoSemaphore, (TickType_t)5) == pdTRUE)
             {
-                Serial.print("P-3 to R-2 ");
-                Serial.println(uxSemaphoreGetCount(xResourceTwoSemaphore));
+                //Serial.print("P-3 to R-2 ");
+                //Serial.println(uxSemaphoreGetCount(xResourceTwoSemaphore));
                 digitalWrite(resource_2, HIGH);
                 digitalWrite(process_3, HIGH);
                 vTaskDelay(100);
@@ -202,7 +167,7 @@ void processThree(void *pvParamaters __attribute__((unused)))
             }
             digitalWrite(resource_3, LOW);
             xSemaphoreGive(xResourceThreeSemaphore);
-            vTaskDelay(100);
+            vTaskDelay(250);
         }
     }
 }
@@ -213,13 +178,13 @@ void processFour(void *pvParamaters __attribute__((unused)))
         if (xSemaphoreTake(xResourceThreeSemaphore, (TickType_t)5) == pdTRUE)
         {
             digitalWrite(resource_3, HIGH);
-            Serial.print("P-4 got R-3 ");
-            Serial.println(uxSemaphoreGetCount(xResourceThreeSemaphore));
+            //Serial.print("P-4 got R-3 ");
+            //Serial.println(uxSemaphoreGetCount(xResourceThreeSemaphore));
             vTaskDelay(100);
             if (xSemaphoreTake(xResourceFourSemaphore, (TickType_t)5) == pdTRUE)
             {
-                Serial.print("P-4 to R-4 ");
-                Serial.println(uxSemaphoreGetCount(xResourceFourSemaphore));
+                //Serial.print("P-4 to R-4 ");
+                //Serial.println(uxSemaphoreGetCount(xResourceFourSemaphore));
                 digitalWrite(resource_4, HIGH);
                 digitalWrite(process_4, HIGH);
                 vTaskDelay(100);
@@ -229,7 +194,7 @@ void processFour(void *pvParamaters __attribute__((unused)))
             }
             digitalWrite(resource_3, LOW);
             xSemaphoreGive(xResourceThreeSemaphore);
-            vTaskDelay(100);
+            vTaskDelay(250);
         }
     }
 }
@@ -240,13 +205,13 @@ void processFive(void *pvParamaters __attribute__((unused)))
         if (xSemaphoreTake(xResourceFiveSemaphore, (TickType_t)5) == pdTRUE)
         {
             digitalWrite(resource_5, HIGH);
-            Serial.print("P-5 got R-5 ");
-            Serial.println(uxSemaphoreGetCount(xResourceFiveSemaphore));
+            //Serial.print("P-5 got R-5 ");
+            //Serial.println(uxSemaphoreGetCount(xResourceFiveSemaphore));
             vTaskDelay(100);
             if (xSemaphoreTake(xResourceFourSemaphore, (TickType_t)5) == pdTRUE)
             {
-                Serial.print("P-5 to R-4 ");
-                Serial.println(uxSemaphoreGetCount(xResourceFourSemaphore));
+                //Serial.print("P-5 to R-4 ");
+                //Serial.println(uxSemaphoreGetCount(xResourceFourSemaphore));
                 digitalWrite(resource_4, HIGH);
                 digitalWrite(process_5, HIGH);
                 vTaskDelay(100);
@@ -256,7 +221,7 @@ void processFive(void *pvParamaters __attribute__((unused)))
             }
             digitalWrite(resource_5, LOW);
             xSemaphoreGive(xResourceFiveSemaphore);
-            vTaskDelay(100);
+            vTaskDelay(250);
         }
     }
 }
